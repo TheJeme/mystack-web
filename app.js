@@ -12,11 +12,11 @@ const categories = [
       app("chrome", "Chrome", "mainstream", "google-chrome.png"),
       app("safari", "Safari", "mainstream", "safari.png"),
       app("firefox", "Firefox", "mainstream", "firefox-browser.png"),
+      app("zen", "Zen Browser", "indie", "zen-browser.png"),
       app("edge", "Edge", "mainstream", "microsoft-edge.png"),
       app("opera", "Opera", "mainstream", "opera.png"),
       app("arc", "Arc", "mainstream", "arc-browser.jpg"),
       app("brave", "Brave", "privacy", "brave.png"),
-      app("zen", "Zen Browser", "indie", "zen-browser.png"),
       app("vivaldi", "Vivaldi", "indie", "vivaldi.png"),
       app("librewolf", "LibreWolf", "privacy", "librewolf.png"),
       app("mullvadbrowser", "Mullvad Browser", "privacy", "mullvad-browser.png"),
@@ -213,6 +213,7 @@ const categories = [
       app("applereminders", "Apple Reminders", "mainstream", "apple-reminders.png"),
       app("microsofttodo", "Microsoft To Do", "mainstream", "microsoft-todo.png"),
       app("ticktick", "TickTick", "mainstream", "ticktick.png"),
+      app("anydo", "Any.do", "mainstream", "anydo.jpg"),
       app("googletasks", "Google Tasks", "mainstream", "google-tasks.png"),
       app("vikunja", "Vikunja", "privacy", "vikunja.png")
     ]
@@ -344,6 +345,7 @@ const categories = [
     options: [
       app("feedly", "Feedly", "mainstream", "feedly.png"),
       app("inoreader", "Inoreader", "mainstream", "inoreader.png"),
+      app("newsify", "Newsify", "mainstream", "newsify.jpg"),
       app("netnewswire", "NetNewsWire", "indie", "netnewswire.png"),
       app("freshrss", "FreshRSS", "privacy", "freshrss.png"),
       app("readwise", "Readwise Reader", "mainstream", "readwise.png"),
@@ -361,6 +363,7 @@ const categories = [
       app("arq", "Arq", "indie", "arq.png"),
       app("borgbackup", "BorgBackup", "privacy", "borgbackup.png"),
       app("restic", "Restic", "privacy", "restic.png"),
+      app("kopia", "Kopia", "privacy", "kopia.png"),
       app("duplicati", "Duplicati", "privacy", "duplicati.png"),
       app("syncthing", "Syncthing", "privacy", "syncthing.png")
     ]
@@ -373,6 +376,8 @@ const categories = [
       app("protonvpn", "Proton VPN", "privacy", "proton-vpn.png"),
       app("mullvad", "Mullvad", "privacy", "mullvad.png"),
       app("nordvpn", "NordVPN", "mainstream", "nordvpn.png"),
+      app("surfshark", "Surfshark", "mainstream", "surfshark.jpg"),
+      app("expressvpn", "ExpressVPN", "mainstream", "expressvpn.jpg"),
       app("ivpn", "IVPN", "privacy", "ivpn.png"),
       app("warp", "Cloudflare WARP", "mainstream", "cloudflare.png"),
       app("tailscale", "Tailscale", "privacy", "tailscale.png")
@@ -388,6 +393,7 @@ const categories = [
       app("pihole", "Pi-hole", "privacy", "pi-hole.png"),
       app("controld", "Control D", "privacy", "control-d.png"),
       app("cloudflaredns", "Cloudflare", "mainstream", "cloudflare.png"),
+      app("opendns", "OpenDNS", "mainstream", "opendns.png"),
       app("quad9", "Quad9", "privacy", "quad9.png"),
       app("rethinkdns", "RethinkDNS", "privacy", "rethinkdns.png")
     ]
@@ -432,6 +438,7 @@ const categories = [
       app("alexa", "Alexa", "mainstream", "alexa.png"),
       app("homeassistant", "Home Assistant", "privacy", "home-assistant.png"),
       app("smartthings", "SmartThings", "mainstream", "smartthings.png"),
+      app("aqarahome", "Aqara Home", "mainstream", "aqara-home.jpg"),
       app("philipshue", "Philips Hue", "mainstream", "philips-hue.png"),
       app("hubitat", "Hubitat", "indie", "hubitat.png")
     ]
@@ -443,6 +450,7 @@ const categories = [
     options: [
       app("googletranslate", "Google Translate", "mainstream", "google-translate.png"),
       app("deepl", "DeepL", "mainstream", "deepl.png"),
+      app("papago", "Papago", "mainstream", "papago.jpg"),
       app("appletranslate", "Apple Translate", "mainstream", "apple-translate.png"),
       app("microsofttranslator", "Microsoft Translator", "mainstream", "microsoft-translator.png"),
       app("linguee", "Linguee", "mainstream", "linguee.png"),
@@ -462,7 +470,7 @@ const categories = [
       app("squarespace", "Squarespace", "mainstream", "squarespace.png"),
       app("hover", "Hover", "indie", "hover.png"),
       app("dynadot", "Dynadot", "mainstream", "dynadot.png"),
-      app("wordpress", "WordPress.com", "mainstream", "wordpress.png")
+      app("wordpress", "WordPress", "mainstream", "wordpress.png")
     ]
   },
   {
@@ -506,7 +514,8 @@ const categories = [
       app("bitbucket", "Bitbucket", "mainstream", "bitbucket.png"),
       app("sourcehut", "SourceHut", "indie", "sourcehut.png"),
       app("gitea", "Gitea", "privacy", "gitea.png"),
-      app("forgejo", "Forgejo", "privacy", "forgejo.png")
+      app("forgejo", "Forgejo", "privacy", "forgejo.png"),
+      app("radicle", "Radicle", "privacy", "radicle.png")
     ]
   }
 ];
@@ -569,7 +578,7 @@ function getSelectedOption(category) {
 function renderCategories() {
   elements.categoryList.innerHTML = getAllCategories().map((category) => {
     const customOption = state.custom[category.id];
-    const options = customOption ? [...category.options, customOption] : category.options;
+    const customSelected = Boolean(customOption && state.selected[category.id] === customOptionId);
 
     return `
       <article class="category-block">
@@ -582,10 +591,12 @@ function renderCategories() {
           ` : ""}
         </div>
         <div>
-          <div class="option-grid" role="radiogroup" aria-label="${escapeHtml(category.name)}">
-            ${options.map((option) => renderOption(category, option)).join("")}
-          </div>
-          <form class="custom-form" data-category="${category.id}">
+          ${category.options.length ? `
+            <div class="option-grid" role="radiogroup" aria-label="${escapeHtml(category.name)}">
+              ${category.options.map((option) => renderOption(category, option)).join("")}
+            </div>
+          ` : ""}
+          <form class="custom-form ${customSelected ? "is-selected" : ""}" data-category="${category.id}">
             <input
               type="text"
               name="customName"
@@ -594,7 +605,8 @@ function renderCategories() {
               placeholder="Custom app"
               aria-label="Custom ${escapeHtml(category.name)} app"
             >
-            <button type="submit">Use</button>
+            <button type="submit" data-custom-submit>${customSelected ? "Update" : "Use"}</button>
+            <button class="custom-clear" type="button" data-clear-custom="${category.id}">Clear</button>
           </form>
         </div>
       </article>
@@ -1044,6 +1056,14 @@ function updateOptionSelectionUI() {
     button.classList.toggle("is-selected", selected);
     button.setAttribute("aria-checked", String(selected));
   });
+
+  elements.categoryList.querySelectorAll(".custom-form").forEach((form) => {
+    const categoryId = form.dataset.category;
+    const customOption = state.custom[categoryId];
+    const selected = Boolean(customOption && state.selected[categoryId] === customOptionId);
+    form.classList.toggle("is-selected", selected);
+    form.querySelector("[data-custom-submit]").textContent = selected ? "Update" : "Use";
+  });
 }
 
 function update({ syncUrl = true, renderCategoryList = true } = {}) {
@@ -1144,6 +1164,16 @@ elements.categoryList.addEventListener("click", (event) => {
   const removeButton = event.target.closest(".remove-category");
   if (removeButton) {
     removeUserCategory(removeButton.dataset.removeCategory);
+    return;
+  }
+
+  const clearButton = event.target.closest(".custom-clear");
+  if (clearButton) {
+    const categoryId = clearButton.dataset.clearCustom;
+    if (state.selected[categoryId] === customOptionId) {
+      state.selected[categoryId] = null;
+    }
+    update({ renderCategoryList: false });
     return;
   }
 

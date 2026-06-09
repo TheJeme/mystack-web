@@ -173,7 +173,7 @@ p {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-top: 12px;
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -290,7 +290,7 @@ p {
 
 .custom-form {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 7px;
   margin-top: 7px;
 }
@@ -324,6 +324,19 @@ p {
 .custom-form button:hover {
   border-color: var(--line-strong);
   background: #fafaf7;
+}
+
+.custom-form .custom-clear {
+  display: none;
+}
+
+.custom-form.is-selected input {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.custom-form.is-selected .custom-clear {
+  display: block;
 }
 
 .option-icon,
