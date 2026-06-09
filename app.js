@@ -753,7 +753,7 @@ async function drawIcon(ctx, option, x, y, size) {
 function drawCanvasLink(ctx, width) {
   const text = "mystack.jeme.app";
   ctx.save();
-  ctx.fillStyle = "#0d6b4f";
+  ctx.fillStyle = "#171717";
   ctx.font = "700 27px system-ui, sans-serif";
   ctx.textAlign = "right";
   ctx.fillText(text, width - 78, 124);
@@ -822,7 +822,7 @@ function colorFromString(text) {
   for (let index = 0; index < text.length; index += 1) {
     hash = text.charCodeAt(index) + ((hash << 5) - hash);
   }
-  const colors = ["#1e7a58", "#b6572b", "#2c6f9f", "#7f4c99", "#98752d"];
+  const colors = ["#171717", "#3f3f3a", "#5f5f58", "#7a7a72", "#2f2f2b"];
   return colors[Math.abs(hash) % colors.length];
 }
 
