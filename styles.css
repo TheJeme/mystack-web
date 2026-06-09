@@ -391,7 +391,7 @@ p {
 
 .selected-item {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-columns: minmax(28px, 62px) minmax(0, 1fr);
   align-items: center;
   gap: 8px;
   min-width: 0;
@@ -399,6 +399,12 @@ p {
   border-radius: var(--radius);
   padding: 7px;
   background: var(--panel-subtle);
+}
+
+.selected-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .empty-selection {

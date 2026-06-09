@@ -2,6 +2,7 @@ const iconBase = "assets/icons/";
 const customOptionId = "custom";
 const customCategoriesParam = "extra";
 const maxCustomCategories = 8;
+const maxSelectionsPerCategory = 2;
 
 const categories = [
   {
@@ -56,7 +57,7 @@ const categories = [
   {
     id: "appstore",
     name: "App Store",
-    subtitle: "Where you get apps from.",
+    subtitle: "Where you get new apps from.",
     options: [
       app("appleappstore", "App Store", "mainstream", "app-store.png"),
       app("googleplay", "Google Play", "mainstream", "google-play.png"),
@@ -311,7 +312,7 @@ const categories = [
   {
     id: "gaming",
     name: "Gaming",
-    subtitle: "Games, stores, and play services.",
+    subtitle: "Games, stores, and cloud play.",
     options: [
       app("steam", "Steam", "mainstream", "steam.png"),
       app("epicgames", "Epic Games", "mainstream", "epic-games.png"),
@@ -386,7 +387,7 @@ const categories = [
   {
     id: "dnsblocking",
     name: "DNS",
-    subtitle: "DNS resolvers and DNS services.",
+    subtitle: "DNS resolvers and filters.",
     options: [
       app("nextdnsblock", "NextDNS", "privacy", "nextdns.png"),
       app("adguarddnsblock", "AdGuard DNS", "privacy", "adguard.png"),
@@ -552,33 +553,50 @@ function getAllCategories() {
 function getSelectedItems() {
   return getAllCategories().map((category) => ({
     category,
-    option: getSelectedOption(category)
-  })).filter(({ option }) => option);
+    options: getSelectedOptions(category)
+  })).filter(({ options }) => options.length);
 }
 
 function createEmptySelection(categoryList = categories) {
-  return Object.fromEntries(categoryList.map((category) => [category.id, null]));
+  return Object.fromEntries(categoryList.map((category) => [category.id, []]));
 }
 
 function createEmptyCustomSelection(categoryList = categories) {
   return Object.fromEntries(categoryList.map((category) => [category.id, null]));
 }
 
-function getSelectedOption(category) {
-  const selectedId = state.selected[category.id];
-  if (!selectedId) {
-    return null;
+function getSelectedIds(categoryId) {
+  const selected = state.selected[categoryId];
+  if (!selected) {
+    return [];
   }
-  if (selectedId === customOptionId) {
-    return state.custom[category.id];
+  if (Array.isArray(selected)) {
+    return selected.filter(Boolean).slice(0, maxSelectionsPerCategory);
   }
-  return category.options.find((option) => option.id === selectedId) || null;
+  return [selected].filter(Boolean);
+}
+
+function setSelectedIds(categoryId, selectedIds) {
+  state.selected[categoryId] = [...new Set(selectedIds.filter(Boolean))].slice(0, maxSelectionsPerCategory);
+}
+
+function isOptionSelected(categoryId, optionId) {
+  return getSelectedIds(categoryId).includes(optionId);
+}
+
+function getSelectedOptions(category) {
+  return getSelectedIds(category.id).map((selectedId) => {
+    if (selectedId === customOptionId) {
+      return state.custom[category.id];
+    }
+    return category.options.find((option) => option.id === selectedId) || null;
+  }).filter(Boolean);
 }
 
 function renderCategories() {
   elements.categoryList.innerHTML = getAllCategories().map((category) => {
     const customOption = state.custom[category.id];
-    const customSelected = Boolean(customOption && state.selected[category.id] === customOptionId);
+    const customSelected = Boolean(customOption && isOptionSelected(category.id, customOptionId));
 
     return `
       <article class="category-block">
@@ -592,7 +610,7 @@ function renderCategories() {
         </div>
         <div>
           ${category.options.length ? `
-            <div class="option-grid" role="radiogroup" aria-label="${escapeHtml(category.name)}">
+            <div class="option-grid" role="group" aria-label="${escapeHtml(category.name)}">
               ${category.options.map((option) => renderOption(category, option)).join("")}
             </div>
           ` : ""}
@@ -602,8 +620,8 @@ function renderCategories() {
               name="customName"
               maxlength="32"
               value="${escapeHtml(customOption?.name || "")}"
-              placeholder="Custom app"
-              aria-label="Custom ${escapeHtml(category.name)} app"
+              placeholder="Custom"
+              aria-label="Custom ${escapeHtml(category.name)}"
             >
             <button type="submit" data-custom-submit>${customSelected ? "Update" : "Use"}</button>
             <button class="custom-clear" type="button" data-clear-custom="${category.id}">Clear</button>
@@ -615,12 +633,12 @@ function renderCategories() {
 }
 
 function renderOption(category, option) {
-  const selected = state.selected[category.id] === option.id;
+  const selected = isOptionSelected(category.id, option.id);
   return `
     <button
       class="option-card ${selected ? "is-selected" : ""}"
       type="button"
-      role="radio"
+      role="checkbox"
       aria-checked="${selected}"
       data-category="${category.id}"
       data-option="${option.id}"
@@ -637,7 +655,7 @@ function renderSelectedList() {
   const selectedItems = getSelectedItems();
   const allCategories = getAllCategories();
   const progress = allCategories.length ? Math.round((selectedItems.length / allCategories.length) * 100) : 0;
-  elements.selectionCount.textContent = `${selectedItems.length} / ${allCategories.length} selected`;
+  elements.selectionCount.textContent = `${selectedItems.length} / ${allCategories.length} categories selected`;
   elements.selectionProgressBar.style.width = `${progress}%`;
 
   if (!selectedItems.length) {
@@ -645,12 +663,14 @@ function renderSelectedList() {
     return;
   }
 
-  elements.selectedList.innerHTML = selectedItems.map(({ category, option }) => `
+  elements.selectedList.innerHTML = selectedItems.map(({ category, options }) => `
     <div class="selected-item">
-      ${renderIcon(option, "selected-icon")}
+      <span class="selected-icons">
+        ${options.map((option) => renderIcon(option, "selected-icon")).join("")}
+      </span>
       <span>
         <span class="selected-category">${escapeHtml(category.name)}</span>
-        <span class="selected-name">${escapeHtml(option.name)}</span>
+        <span class="selected-name">${escapeHtml(options.map((option) => option.name).join(" + "))}</span>
       </span>
     </div>
   `).join("");
@@ -701,15 +721,7 @@ async function renderCanvas() {
     ctx.lineWidth = 2;
     roundedRect(ctx, 78, 250, 1044, 560, 18);
     ctx.stroke();
-
-    ctx.fillStyle = "#171717";
-    ctx.font = "720 44px system-ui, sans-serif";
-    ctx.fillText("No apps selected yet", 150, 492);
-
-    ctx.fillStyle = "#64645f";
-    ctx.font = "600 28px system-ui, sans-serif";
-    ctx.fillText("Choose an app in any category to start.", 150, 548);
-
+    
     return;
   }
 
@@ -731,7 +743,7 @@ async function renderCanvas() {
   const nameSize = dense ? 24 : selectedCount > 10 ? 26 : 30;
 
   for (let index = 0; index < selectedItems.length; index += 1) {
-    const { category, option } = selectedItems[index];
+    const { category, options } = selectedItems[index];
     const col = index % columns;
     const row = Math.floor(index / columns);
     const x = startX + col * (cardWidth + gap);
@@ -746,7 +758,31 @@ async function renderCanvas() {
     roundedRect(ctx, x, y, cardWidth, cardHeight, 10);
     ctx.stroke();
 
-    if (dense) {
+    if (options.length > 1) {
+      const pairIconSize = dense ? 52 : selectedCount > 10 ? 58 : 72;
+      const pairNameSize = dense ? 18 : selectedCount > 10 ? 21 : 25;
+      const categoryY = dense ? y + 30 : selectedCount > 10 ? y + 40 : y + 44;
+      const iconY = dense ? y + 46 : selectedCount > 10 ? y + 58 : y + 66;
+      const nameY = dense ? y + 124 : selectedCount > 10 ? y + 142 : y + 172;
+      const optionWidth = (cardWidth - 32) / 2;
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#64645f";
+      ctx.font = `700 ${categorySize}px system-ui, sans-serif`;
+      drawFittedText(ctx, category.name.toUpperCase(), x + cardWidth / 2, categoryY, cardWidth - 24, categorySize);
+
+      for (let optionIndex = 0; optionIndex < options.length; optionIndex += 1) {
+        const option = options[optionIndex];
+        const centerX = x + 16 + optionWidth * optionIndex + optionWidth / 2;
+        await drawIcon(ctx, option, centerX - pairIconSize / 2, iconY, pairIconSize);
+
+        ctx.fillStyle = "#171717";
+        ctx.font = `720 ${pairNameSize}px system-ui, sans-serif`;
+        drawFittedText(ctx, option.name, centerX, nameY, optionWidth - 8, pairNameSize);
+      }
+      ctx.textAlign = "left";
+    } else if (dense) {
+      const option = options[0];
       const iconX = x + (cardWidth - iconSize) / 2;
       await drawIcon(ctx, option, iconX, y + 18, iconSize);
 
@@ -760,6 +796,7 @@ async function renderCanvas() {
       drawFittedText(ctx, option.name, x + cardWidth / 2, y + 148, cardWidth - 24, nameSize);
       ctx.textAlign = "left";
     } else {
+      const option = options[0];
       const iconXOffset = selectedCount > 10 ? 18 : 24;
       const iconYOffset = selectedCount > 10 ? 26 : 34;
       const textXOffset = iconXOffset + iconSize + 22;
@@ -945,7 +982,7 @@ function addUserCategory(categoryName, appName, { selected = true } = {}) {
   const { category, option } = createUserCategory(normalizedCategory, normalizedApp);
   state.customCategories.push(category);
   state.custom[category.id] = option;
-  state.selected[category.id] = selected ? customOptionId : null;
+  state.selected[category.id] = selected ? [customOptionId] : [];
   return true;
 }
 
@@ -985,31 +1022,41 @@ function hydrateFromQueryParams() {
   hydrateCustomCategories(params);
 
   getAllCategories().forEach((category) => {
-    const value = params.get(category.id);
-    if (!value) {
+    const values = params.getAll(category.id).slice(0, maxSelectionsPerCategory);
+    if (!values.length) {
       return;
     }
 
-    if (value.startsWith(`${customOptionId}:`)) {
-      const customName = normalizeCustomName(value.slice(customOptionId.length + 1));
-      if (!customName) {
+    const selectedIds = [];
+
+    values.forEach((value) => {
+      if (selectedIds.length >= maxSelectionsPerCategory) {
         return;
       }
 
-      state.custom[category.id] = {
-        id: customOptionId,
-        name: customName,
-        kind: "custom",
-        icon: null,
-        isCustom: true
-      };
-      state.selected[category.id] = customOptionId;
-      return;
-    }
+      if (value.startsWith(`${customOptionId}:`)) {
+        const customName = normalizeCustomName(value.slice(customOptionId.length + 1));
+        if (!customName) {
+          return;
+        }
 
-    if (category.options.some((option) => option.id === value)) {
-      state.selected[category.id] = value;
-    }
+        state.custom[category.id] = {
+          id: customOptionId,
+          name: customName,
+          kind: "custom",
+          icon: null,
+          isCustom: true
+        };
+        selectedIds.push(customOptionId);
+        return;
+      }
+
+      if (category.options.some((option) => option.id === value)) {
+        selectedIds.push(value);
+      }
+    });
+
+    setSelectedIds(category.id, selectedIds);
   });
 }
 
@@ -1021,27 +1068,29 @@ function updateQueryParams() {
       return;
     }
 
-    const selectedId = state.selected[category.id];
-    if (!selectedId) {
+    const selectedIds = getSelectedIds(category.id);
+    if (!selectedIds.length) {
       return;
     }
 
-    if (selectedId === customOptionId) {
-      const customName = state.custom[category.id]?.name;
-      if (customName) {
-        params.set(category.id, `${customOptionId}:${customName}`);
+    selectedIds.forEach((selectedId) => {
+      if (selectedId === customOptionId) {
+        const customName = state.custom[category.id]?.name;
+        if (customName) {
+          params.append(category.id, `${customOptionId}:${customName}`);
+        }
+        return;
       }
-      return;
-    }
 
-    params.set(category.id, selectedId);
+      params.append(category.id, selectedId);
+    });
   });
 
   if (state.customCategories.length) {
     params.set(customCategoriesParam, JSON.stringify(state.customCategories.map((category) => ({
       category: category.name,
       app: state.custom[category.id]?.name || "",
-      selected: state.selected[category.id] === customOptionId
+      selected: isOptionSelected(category.id, customOptionId)
     }))));
   }
 
@@ -1052,7 +1101,7 @@ function updateQueryParams() {
 
 function updateOptionSelectionUI() {
   elements.categoryList.querySelectorAll(".option-card").forEach((button) => {
-    const selected = state.selected[button.dataset.category] === button.dataset.option;
+    const selected = isOptionSelected(button.dataset.category, button.dataset.option);
     button.classList.toggle("is-selected", selected);
     button.setAttribute("aria-checked", String(selected));
   });
@@ -1060,7 +1109,7 @@ function updateOptionSelectionUI() {
   elements.categoryList.querySelectorAll(".custom-form").forEach((form) => {
     const categoryId = form.dataset.category;
     const customOption = state.custom[categoryId];
-    const selected = Boolean(customOption && state.selected[categoryId] === customOptionId);
+    const selected = Boolean(customOption && isOptionSelected(categoryId, customOptionId));
     form.classList.toggle("is-selected", selected);
     form.querySelector("[data-custom-submit]").textContent = selected ? "Update" : "Use";
   });
@@ -1170,9 +1219,7 @@ elements.categoryList.addEventListener("click", (event) => {
   const clearButton = event.target.closest(".custom-clear");
   if (clearButton) {
     const categoryId = clearButton.dataset.clearCustom;
-    if (state.selected[categoryId] === customOptionId) {
-      state.selected[categoryId] = null;
-    }
+    setSelectedIds(categoryId, getSelectedIds(categoryId).filter((selectedId) => selectedId !== customOptionId));
     update({ renderCategoryList: false });
     return;
   }
@@ -1184,7 +1231,15 @@ elements.categoryList.addEventListener("click", (event) => {
 
   const categoryId = button.dataset.category;
   const optionId = button.dataset.option;
-  state.selected[categoryId] = state.selected[categoryId] === optionId ? null : optionId;
+  const selectedIds = getSelectedIds(categoryId);
+  if (selectedIds.includes(optionId)) {
+    setSelectedIds(categoryId, selectedIds.filter((selectedId) => selectedId !== optionId));
+  } else if (selectedIds.length >= maxSelectionsPerCategory) {
+    setStatus(`Choose up to ${maxSelectionsPerCategory} per category.`);
+    return;
+  } else {
+    setSelectedIds(categoryId, [...selectedIds, optionId]);
+  }
   update({ renderCategoryList: false });
 });
 
@@ -1210,7 +1265,14 @@ elements.categoryList.addEventListener("submit", (event) => {
     icon: null,
     isCustom: true
   };
-  state.selected[categoryId] = customOptionId;
+  const selectedIds = getSelectedIds(categoryId);
+  if (!selectedIds.includes(customOptionId)) {
+    if (selectedIds.length >= maxSelectionsPerCategory) {
+      setStatus(`Choose up to ${maxSelectionsPerCategory} per category.`);
+      return;
+    }
+    setSelectedIds(categoryId, [...selectedIds, customOptionId]);
+  }
   update();
 });
 
