@@ -679,7 +679,7 @@ async function renderCanvas() {
   const startX = 78 + gap;
   const startY = contentY + gap;
   const compact = poster;
-  const iconSize = compact ? 36 : 58;
+  const iconSize = compact ? 46 : 58;
   const iconXOffset = compact ? 14 : 22;
   const iconYOffset = compact ? 18 : 28;
   const textXOffset = compact ? 60 : 94;
