@@ -12,6 +12,7 @@ const categories = [
       app("firefox", "Firefox", "mainstream", "firefox-browser.png"),
       app("edge", "Edge", "mainstream", "microsoft-edge.png"),
       app("brave", "Brave", "privacy", "brave.png"),
+      app("zen", "Zen Browser", "indie", "zen-browser.png"),
       app("vivaldi", "Vivaldi", "indie", "vivaldi.png"),
       app("librewolf", "LibreWolf", "privacy", "librewolf.png"),
       app("tor", "Tor Browser", "privacy", "tor-browser.png")
