@@ -130,7 +130,8 @@ const categories = [
       app("googlepasswords", "Google Password Manager", "mainstream", "google-password-manager.png"),
       app("protonpass", "Proton Pass", "privacy", "proton-pass.png"),
       app("keepassxc", "KeePassXC", "privacy", "keepassxc.png"),
-      app("dashlane", "Dashlane", "mainstream", "dashlane.png")
+      app("dashlane", "Dashlane", "mainstream", "dashlane.png"),
+      app("lastpass", "LastPass", "mainstream", "lastpass.png")
     ]
   },
   {
@@ -224,6 +225,7 @@ const categories = [
       app("icloud", "iCloud Drive", "mainstream", "icloud.png"),
       app("onedrive", "OneDrive", "mainstream", "onedrive.png"),
       app("dropbox", "Dropbox", "mainstream", "dropbox.png"),
+      app("box", "Box", "mainstream", "box.png"),
       app("protondrive", "Proton Drive", "privacy", "proton-drive.png"),
       app("nextcloud", "Nextcloud", "privacy", "nextcloud.png"),
       app("tresorit", "Tresorit", "privacy", "tresorit.png")
@@ -282,6 +284,7 @@ const categories = [
       app("tidal", "Tidal", "mainstream", "tidal.png"),
       app("deezer", "Deezer", "mainstream", "deezer.png"),
       app("bandcamp", "Bandcamp", "indie", "bandcamp.png"),
+      app("soundcloud", "SoundCloud", "mainstream", "soundcloud.png"),
       app("qobuz", "Qobuz", "indie", "qobuz.png")
     ]
   },
@@ -329,20 +332,6 @@ const categories = [
     ]
   },
   {
-    id: "readlater",
-    name: "Read Later",
-    subtitle: "Save articles and links for later.",
-    options: [
-      app("pocket", "Pocket", "mainstream", "pocket.png"),
-      app("instapaper", "Instapaper", "mainstream", "instapaper.png"),
-      app("raindrop", "Raindrop", "mainstream", "raindrop.png"),
-      app("omnivore", "Omnivore", "privacy", "omnivore.png"),
-      app("wallabag", "Wallabag", "privacy", "wallabag.png"),
-      app("linkwarden", "Linkwarden", "privacy", "linkwarden.png"),
-      app("readwisereader", "Readwise Reader", "mainstream", "readwise.png")
-    ]
-  },
-  {
     id: "backups",
     name: "Backups",
     subtitle: "Device and file recovery.",
@@ -366,6 +355,7 @@ const categories = [
       app("nordvpn", "NordVPN", "mainstream", "nordvpn.png"),
       app("ivpn", "IVPN", "privacy", "ivpn.png"),
       app("warp", "Cloudflare WARP", "mainstream", "cloudflare.png"),
+      app("tailscale", "Tailscale", "privacy", "tailscale.png"),
       app("nextdns", "NextDNS", "privacy", "nextdns.png"),
       app("adguarddns", "AdGuard DNS", "privacy", "adguard.png")
     ]
@@ -897,8 +887,20 @@ function updateQueryParams() {
   window.history.replaceState(null, "", nextUrl);
 }
 
-function update({ syncUrl = true } = {}) {
-  renderCategories();
+function updateOptionSelectionUI() {
+  elements.categoryList.querySelectorAll(".option-card").forEach((button) => {
+    const selected = state.selected[button.dataset.category] === button.dataset.option;
+    button.classList.toggle("is-selected", selected);
+    button.setAttribute("aria-checked", String(selected));
+  });
+}
+
+function update({ syncUrl = true, renderCategoryList = true } = {}) {
+  if (renderCategoryList) {
+    renderCategories();
+  } else {
+    updateOptionSelectionUI();
+  }
   renderSelectedList();
   renderCanvas();
   if (syncUrl) {
@@ -995,7 +997,7 @@ elements.categoryList.addEventListener("click", (event) => {
   const categoryId = button.dataset.category;
   const optionId = button.dataset.option;
   state.selected[categoryId] = state.selected[categoryId] === optionId ? null : optionId;
-  update();
+  update({ renderCategoryList: false });
 });
 
 elements.categoryList.addEventListener("submit", (event) => {
