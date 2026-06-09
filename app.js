@@ -1,5 +1,7 @@
 const iconBase = "assets/icons/";
 const customOptionId = "custom";
+const customCategoriesParam = "extra";
+const maxCustomCategories = 8;
 
 const categories = [
   {
@@ -11,10 +13,13 @@ const categories = [
       app("safari", "Safari", "mainstream", "safari.png"),
       app("firefox", "Firefox", "mainstream", "firefox-browser.png"),
       app("edge", "Edge", "mainstream", "microsoft-edge.png"),
+      app("opera", "Opera", "mainstream", "opera.png"),
+      app("arc", "Arc", "mainstream", "arc-browser.jpg"),
       app("brave", "Brave", "privacy", "brave.png"),
       app("zen", "Zen Browser", "indie", "zen-browser.png"),
       app("vivaldi", "Vivaldi", "indie", "vivaldi.png"),
       app("librewolf", "LibreWolf", "privacy", "librewolf.png"),
+      app("mullvadbrowser", "Mullvad Browser", "privacy", "mullvad-browser.png"),
       app("tor", "Tor Browser", "privacy", "tor-browser.png")
     ]
   },
@@ -28,7 +33,9 @@ const categories = [
       app("grapheneos", "GrapheneOS", "privacy", "grapheneos.png"),
       app("calyxos", "CalyxOS", "privacy", "calyxos.png"),
       app("lineageos", "LineageOS", "indie", "lineageos.png"),
-      app("eos", "/e/OS", "privacy", "e-os.png")
+      app("eos", "/e/OS", "privacy", "e-os.png"),
+      app("sailfishos", "Sailfish OS", "indie", "sailfish-os.svg"),
+      app("ubuntutouch", "Ubuntu Touch", "indie", "ubuntu-touch.jpg")
     ]
   },
   {
@@ -56,6 +63,7 @@ const categories = [
       app("fdroid", "F-Droid", "privacy", "f-droid.png"),
       app("aurorastore", "Aurora Store", "privacy", "aurora-store.png"),
       app("obtainium", "Obtainium", "privacy", "obtainium.png"),
+      app("aptoide", "Aptoide", "indie", "aptoide.png"),
       app("microsoftstore", "Microsoft Store", "mainstream", "microsoft-store.png"),
       app("flathub", "Flathub", "indie", "flathub.png")
     ]
@@ -83,6 +91,7 @@ const categories = [
       app("googlecalendar", "Google Calendar", "mainstream", "google-calendar.png"),
       app("applecalendar", "Apple Calendar", "mainstream", "apple-calendar.png"),
       app("outlookcalendar", "Outlook Calendar", "mainstream", "outlook.png"),
+      app("fantastical", "Fantastical", "mainstream", "fantastical.jpg"),
       app("protoncalendar", "Proton Calendar", "privacy", "proton-calendar.png"),
       app("tutacalendar", "Tuta Calendar", "privacy", "tuta.png"),
       app("nextcloudcalendar", "Nextcloud Calendar", "privacy", "nextcloud.png"),
@@ -145,7 +154,8 @@ const categories = [
       app("twofas", "2FAS", "privacy", "2fas.png"),
       app("aegis", "Aegis", "privacy", "aegis.png"),
       app("enteauth", "Ente Auth", "privacy", "ente-auth.png"),
-      app("bitwardenauth", "Bitwarden Authenticator", "privacy", "bitwarden.png")
+      app("bitwardenauth", "Bitwarden Authenticator", "privacy", "bitwarden.png"),
+      app("yubicoauth", "Yubico Authenticator", "privacy", "yubico-authenticator.jpg")
     ]
   },
   {
@@ -155,6 +165,7 @@ const categories = [
     options: [
       app("applenotes", "Apple Notes", "mainstream", "apple-notes.png"),
       app("googlekeep", "Google Keep", "mainstream", "google-keep.png"),
+      app("onenote", "OneNote", "mainstream", "onenote.png"),
       app("notion", "Notion", "mainstream", "notion.png"),
       app("obsidian", "Obsidian", "indie", "obsidian.png"),
       app("joplin", "Joplin", "privacy", "joplin.png"),
@@ -169,6 +180,7 @@ const categories = [
     options: [
       app("applephotos", "Apple Photos", "mainstream", "apple-photos.png"),
       app("googlephotos", "Google Photos", "mainstream", "google-photos.png"),
+      app("amazonphotos", "Amazon Photos", "mainstream", "amazon-photos.jpg"),
       app("entephotos", "Ente Photos", "privacy", "ente-photos.png"),
       app("immich", "Immich", "privacy", "immich.png"),
       app("flickr", "Flickr", "mainstream", "flickr.png"),
@@ -184,8 +196,10 @@ const categories = [
       app("googlecontacts", "Google Contacts", "mainstream", "google-contacts.png"),
       app("icloudcontacts", "iCloud Contacts", "mainstream", "icloud.png"),
       app("outlookpeople", "Outlook People", "mainstream", "outlook.png"),
+      app("contactsplus", "Contacts+", "mainstream", "contacts-plus.jpg"),
       app("protoncontacts", "Proton Contacts", "privacy", "proton-mail.png"),
       app("nextcloudcontacts", "Nextcloud Contacts", "privacy", "nextcloud.png"),
+      app("etesynccontacts", "EteSync", "privacy", "etesync.png"),
       app("fastmailcontacts", "Fastmail Contacts", "indie", "fastmail.png")
     ]
   },
@@ -211,8 +225,10 @@ const categories = [
       app("googlemaps", "Google Maps", "mainstream", "google-maps.png"),
       app("applemaps", "Apple Maps", "mainstream", "apple-maps.png"),
       app("waze", "Waze", "mainstream", "waze.png"),
+      app("citymapper", "Citymapper", "mainstream", "citymapper.jpg"),
       app("organicmaps", "Organic Maps", "privacy", "organic-maps.png"),
       app("osmand", "OsmAnd", "privacy", "osmand.png"),
+      app("mapy", "Mapy.com", "indie", "mapy.jpg"),
       app("herewego", "HERE WeGo", "indie", "here-wego.png")
     ]
   },
@@ -241,6 +257,7 @@ const categories = [
       app("iwork", "Apple iWork", "mainstream", "iwork.png"),
       app("libreoffice", "LibreOffice", "privacy", "libreoffice.png"),
       app("onlyoffice", "OnlyOffice", "privacy", "onlyoffice.png"),
+      app("collaboraoffice", "Collabora Office", "privacy", "collabora-office.jpg"),
       app("cryptpad", "CryptPad", "privacy", "cryptpad.png"),
       app("zoho", "Zoho Workplace", "indie", "zoho.png")
     ]
@@ -256,6 +273,7 @@ const categories = [
       app("signal", "Signal", "privacy", "signal.png"),
       app("discord", "Discord", "mainstream", "discord.png"),
       app("element", "Element", "privacy", "element.png"),
+      app("simplex", "SimpleX Chat", "privacy", "simplex-chat.jpg"),
       app("threema", "Threema", "privacy", "threema.png")
     ]
   },
@@ -268,6 +286,7 @@ const categories = [
       app("googlemeet", "Google Meet", "mainstream", "google-meet.png"),
       app("facetime", "FaceTime", "mainstream", "facetime.png"),
       app("teams", "Microsoft Teams", "mainstream", "microsoft-teams.png"),
+      app("webex", "Webex", "mainstream", "webex.jpg"),
       app("jitsi", "Jitsi Meet", "privacy", "jitsi.png"),
       app("signalcalls", "Signal", "privacy", "signal.png"),
       app("whereby", "Whereby", "indie", "whereby.png")
@@ -310,6 +329,7 @@ const categories = [
     options: [
       app("applepodcasts", "Apple Podcasts", "mainstream", "apple-podcasts.png"),
       app("spotifypodcasts", "Spotify", "mainstream", "spotify.png"),
+      app("youtubepodcasts", "YouTube", "mainstream", "youtube.svg"),
       app("pocketcasts", "Pocket Casts", "mainstream", "pocket-casts.png"),
       app("overcast", "Overcast", "indie", "overcast.png"),
       app("antennapod", "AntennaPod", "privacy", "antennapod.png"),
@@ -347,23 +367,21 @@ const categories = [
   },
   {
     id: "vpn",
-    name: "VPN / DNS",
-    subtitle: "Network privacy and filtering.",
+    name: "VPN",
+    subtitle: "Encrypted tunnels and private network access.",
     options: [
       app("protonvpn", "Proton VPN", "privacy", "proton-vpn.png"),
       app("mullvad", "Mullvad", "privacy", "mullvad.png"),
       app("nordvpn", "NordVPN", "mainstream", "nordvpn.png"),
       app("ivpn", "IVPN", "privacy", "ivpn.png"),
       app("warp", "Cloudflare WARP", "mainstream", "cloudflare.png"),
-      app("tailscale", "Tailscale", "privacy", "tailscale.png"),
-      app("nextdns", "NextDNS", "privacy", "nextdns.png"),
-      app("adguarddns", "AdGuard DNS", "privacy", "adguard.png")
+      app("tailscale", "Tailscale", "privacy", "tailscale.png")
     ]
   },
   {
     id: "dnsblocking",
-    name: "DNS / Ad Blocking",
-    subtitle: "Block ads, trackers, and unwanted domains.",
+    name: "DNS",
+    subtitle: "DNS resolvers and DNS services.",
     options: [
       app("nextdnsblock", "NextDNS", "privacy", "nextdns.png"),
       app("adguarddnsblock", "AdGuard DNS", "privacy", "adguard.png"),
@@ -379,11 +397,12 @@ const categories = [
     name: "Payments",
     subtitle: "Wallets, transfers, and checkout.",
     options: [
-      app("applepay", "Apple Pay", "mainstream", "apple-pay.png"),
+      app("applepay", "Apple Pay", "mainstream", "apple-pay.jpg"),
       app("googlewallet", "Google Wallet", "mainstream", "google-wallet.png"),
       app("paypal", "PayPal", "mainstream", "paypal.png"),
       app("venmo", "Venmo", "mainstream", "venmo.png"),
       app("cashapp", "Cash App", "mainstream", "cash-app.png"),
+      app("mobilepay", "MobilePay", "mainstream", "mobilepay.jpg"),
       app("wise", "Wise", "mainstream", "wise.png"),
       app("revolut", "Revolut", "mainstream", "revolut.png")
     ]
@@ -408,7 +427,7 @@ const categories = [
     name: "Smart Home",
     subtitle: "Home devices, automations, and controls.",
     options: [
-      app("applehome", "Apple Home", "mainstream", "apple-home.png"),
+      app("applehome", "Apple Home", "mainstream", "apple-home.jpg"),
       app("googlehome", "Google Home", "mainstream", "google-home.png"),
       app("alexa", "Alexa", "mainstream", "alexa.png"),
       app("homeassistant", "Home Assistant", "privacy", "home-assistant.png"),
@@ -442,6 +461,7 @@ const categories = [
       app("godaddy", "GoDaddy", "mainstream", "godaddy.png"),
       app("squarespace", "Squarespace", "mainstream", "squarespace.png"),
       app("hover", "Hover", "indie", "hover.png"),
+      app("dynadot", "Dynadot", "mainstream", "dynadot.png"),
       app("wordpress", "WordPress.com", "mainstream", "wordpress.png")
     ]
   },
@@ -456,6 +476,7 @@ const categories = [
       app("neovim", "Neovim", "privacy", "neovim.png"),
       app("jetbrains", "JetBrains", "mainstream", "jetbrains.png"),
       app("sublimetext", "Sublime Text", "indie", "sublime-text.png"),
+      app("emacs", "Emacs", "privacy", "emacs.svg"),
       app("vim", "Vim", "privacy", "vim.png")
     ]
   },
@@ -470,7 +491,8 @@ const categories = [
       app("wezterm", "WezTerm", "privacy", "wezterm.png"),
       app("ghostty", "Ghostty", "indie", "ghostty.png"),
       app("warpterminal", "Warp", "mainstream", "warp.png"),
-      app("kitty", "Kitty", "privacy", "kitty.png")
+      app("kitty", "Kitty", "privacy", "kitty.png"),
+      app("foot", "Foot", "privacy", "foot.svg")
     ]
   },
   {
@@ -495,10 +517,12 @@ function app(id, name, kind, icon) {
 
 const state = {
   selected: createEmptySelection(),
-  custom: createEmptyCustomSelection()
+  custom: createEmptyCustomSelection(),
+  customCategories: []
 };
 
 const elements = {
+  customCategoryForm: document.querySelector("#customCategoryForm"),
   categoryList: document.querySelector("#categoryList"),
   selectedList: document.querySelector("#selectedList"),
   canvas: document.querySelector("#stackCanvas"),
@@ -512,19 +536,23 @@ const elements = {
 
 const imageCache = new Map();
 
+function getAllCategories() {
+  return [...categories, ...state.customCategories];
+}
+
 function getSelectedItems() {
-  return categories.map((category) => ({
+  return getAllCategories().map((category) => ({
     category,
     option: getSelectedOption(category)
   })).filter(({ option }) => option);
 }
 
-function createEmptySelection() {
-  return Object.fromEntries(categories.map((category) => [category.id, null]));
+function createEmptySelection(categoryList = categories) {
+  return Object.fromEntries(categoryList.map((category) => [category.id, null]));
 }
 
-function createEmptyCustomSelection() {
-  return Object.fromEntries(categories.map((category) => [category.id, null]));
+function createEmptyCustomSelection(categoryList = categories) {
+  return Object.fromEntries(categoryList.map((category) => [category.id, null]));
 }
 
 function getSelectedOption(category) {
@@ -539,14 +567,19 @@ function getSelectedOption(category) {
 }
 
 function renderCategories() {
-  elements.categoryList.innerHTML = categories.map((category) => {
+  elements.categoryList.innerHTML = getAllCategories().map((category) => {
     const customOption = state.custom[category.id];
     const options = customOption ? [...category.options, customOption] : category.options;
 
     return `
       <article class="category-block">
-        <div>
+        <div class="category-meta">
           <h3 class="category-title">${escapeHtml(category.name)}</h3>
+          ${category.isUserCategory ? `
+            <button class="remove-category" type="button" data-remove-category="${category.id}">
+              Remove
+            </button>
+          ` : ""}
         </div>
         <div>
           <div class="option-grid" role="radiogroup" aria-label="${escapeHtml(category.name)}">
@@ -590,8 +623,9 @@ function renderOption(category, option) {
 
 function renderSelectedList() {
   const selectedItems = getSelectedItems();
-  const progress = Math.round((selectedItems.length / categories.length) * 100);
-  elements.selectionCount.textContent = `${selectedItems.length} / ${categories.length} selected`;
+  const allCategories = getAllCategories();
+  const progress = allCategories.length ? Math.round((selectedItems.length / allCategories.length) * 100) : 0;
+  elements.selectionCount.textContent = `${selectedItems.length} / ${allCategories.length} selected`;
   elements.selectionProgressBar.style.width = `${progress}%`;
 
   if (!selectedItems.length) {
@@ -613,8 +647,15 @@ function renderSelectedList() {
 async function renderCanvas() {
   const canvas = elements.canvas;
   const selectedItems = getSelectedItems();
-  const poster = selectedItems.length > 18;
-  const nextHeight = poster ? 1600 : 1200;
+  const selectedCount = selectedItems.length;
+  const columns = selectedCount > 28 ? 4 : selectedCount > 10 ? 3 : selectedCount > 2 ? 2 : 1;
+  const rows = selectedCount ? Math.ceil(selectedCount / columns) : 0;
+  const dense = selectedCount > 18;
+  const gap = dense ? 14 : 16;
+  const cardTargetHeight = dense ? 166 : selectedCount > 10 ? 188 : 214;
+  const contentY = 220;
+  const contentHeight = selectedCount ? rows * cardTargetHeight + gap * (rows + 1) : 560;
+  const nextHeight = selectedCount ? Math.max(1200, contentY + contentHeight + 130) : 1200;
   if (canvas.width !== 1200) {
     canvas.width = 1200;
   }
@@ -660,8 +701,6 @@ async function renderCanvas() {
     return;
   }
 
-  const contentY = 220;
-  const contentHeight = height - 340;
   ctx.fillStyle = "#ffffff";
   roundedRect(ctx, 78, contentY, 1044, contentHeight, 18);
   ctx.fill();
@@ -671,20 +710,13 @@ async function renderCanvas() {
   roundedRect(ctx, 78, contentY, 1044, contentHeight, 18);
   ctx.stroke();
 
-  const columns = poster ? 4 : 3;
-  const rows = Math.ceil(selectedItems.length / columns);
-  const gap = poster ? 10 : 14;
   const cardWidth = (1044 - gap * (columns + 1)) / columns;
-  const cardHeight = (contentHeight - gap * (rows + 1)) / rows;
+  const cardHeight = cardTargetHeight;
   const startX = 78 + gap;
   const startY = contentY + gap;
-  const compact = poster;
-  const iconSize = compact ? 46 : 58;
-  const iconXOffset = compact ? 14 : 22;
-  const iconYOffset = compact ? 18 : 28;
-  const textXOffset = compact ? 60 : 94;
-  const categorySize = compact ? 12 : 18;
-  const nameSize = compact ? 19 : 28;
+  const iconSize = dense ? 74 : selectedCount > 10 ? 82 : 96;
+  const categorySize = dense ? 13 : selectedCount > 10 ? 15 : 18;
+  const nameSize = dense ? 24 : selectedCount > 10 ? 26 : 30;
 
   for (let index = 0; index < selectedItems.length; index += 1) {
     const { category, option } = selectedItems[index];
@@ -702,15 +734,33 @@ async function renderCanvas() {
     roundedRect(ctx, x, y, cardWidth, cardHeight, 10);
     ctx.stroke();
 
-    await drawIcon(ctx, option, x + iconXOffset, y + iconYOffset, iconSize);
+    if (dense) {
+      const iconX = x + (cardWidth - iconSize) / 2;
+      await drawIcon(ctx, option, iconX, y + 18, iconSize);
 
-    ctx.fillStyle = "#64645f";
-    ctx.font = `700 ${categorySize}px system-ui, sans-serif`;
-    ctx.fillText(category.name.toUpperCase(), x + textXOffset, y + (compact ? 35 : 56));
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#64645f";
+      ctx.font = `700 ${categorySize}px system-ui, sans-serif`;
+      drawFittedText(ctx, category.name.toUpperCase(), x + cardWidth / 2, y + 116, cardWidth - 24, categorySize);
 
-    ctx.fillStyle = "#171717";
-    ctx.font = `720 ${nameSize}px system-ui, sans-serif`;
-    drawFittedText(ctx, option.name, x + textXOffset, y + (compact ? 63 : 96), cardWidth - textXOffset - 16, nameSize);
+      ctx.fillStyle = "#171717";
+      ctx.font = `720 ${nameSize}px system-ui, sans-serif`;
+      drawFittedText(ctx, option.name, x + cardWidth / 2, y + 148, cardWidth - 24, nameSize);
+      ctx.textAlign = "left";
+    } else {
+      const iconXOffset = selectedCount > 10 ? 18 : 24;
+      const iconYOffset = selectedCount > 10 ? 26 : 34;
+      const textXOffset = iconXOffset + iconSize + 22;
+      await drawIcon(ctx, option, x + iconXOffset, y + iconYOffset, iconSize);
+
+      ctx.fillStyle = "#64645f";
+      ctx.font = `700 ${categorySize}px system-ui, sans-serif`;
+      ctx.fillText(category.name.toUpperCase(), x + textXOffset, y + (selectedCount > 10 ? 64 : 76));
+
+      ctx.fillStyle = "#171717";
+      ctx.font = `720 ${nameSize}px system-ui, sans-serif`;
+      drawFittedText(ctx, option.name, x + textXOffset, y + (selectedCount > 10 ? 104 : 124), cardWidth - textXOffset - 18, nameSize);
+    }
   }
 
 }
@@ -723,13 +773,15 @@ async function drawIcon(ctx, option, x, y, size) {
   ctx.fill();
 
   if (img) {
-    ctx.drawImage(img, x + 10, y + 10, size - 20, size - 20);
+    const padding = Math.max(6, Math.round(size * 0.1));
+    ctx.drawImage(img, x + padding, y + padding, size - padding * 2, size - padding * 2);
   } else {
     ctx.fillStyle = colorFromString(option.name);
-    roundedRect(ctx, x + 10, y + 10, size - 20, size - 20, 10);
+    const padding = Math.max(6, Math.round(size * 0.1));
+    roundedRect(ctx, x + padding, y + padding, size - padding * 2, size - padding * 2, 10);
     ctx.fill();
     ctx.fillStyle = "#ffffff";
-    ctx.font = "720 24px system-ui, sans-serif";
+    ctx.font = `720 ${Math.round(size * 0.36)}px system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(option.name.slice(0, 1).toUpperCase(), x + size / 2, y + size / 2);
@@ -817,7 +869,7 @@ function colorFromString(text) {
 }
 
 function escapeHtml(value) {
-  return value.replace(/[&<>"']/g, (char) => ({
+  return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -827,13 +879,100 @@ function escapeHtml(value) {
 }
 
 function normalizeCustomName(value) {
-  return value.trim().replace(/\s+/g, " ").slice(0, 32);
+  return String(value || "").trim().replace(/\s+/g, " ").slice(0, 32);
+}
+
+function normalizeCustomCategoryName(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").slice(0, 28);
+}
+
+function slugify(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 24) || "custom";
+}
+
+function createUserCategory(categoryName, appName, index = state.customCategories.length) {
+  const normalizedCategory = normalizeCustomCategoryName(categoryName);
+  const normalizedApp = normalizeCustomName(appName);
+  const id = `user-${slugify(normalizedCategory)}-${index + 1}`;
+  const option = {
+    id: customOptionId,
+    name: normalizedApp,
+    kind: "custom",
+    icon: null,
+    isCustom: true
+  };
+
+  return {
+    category: {
+      id,
+      name: normalizedCategory,
+      subtitle: "",
+      options: [],
+      isUserCategory: true
+    },
+    option
+  };
+}
+
+function addUserCategory(categoryName, appName, { selected = true } = {}) {
+  if (state.customCategories.length >= maxCustomCategories) {
+    setStatus(`Custom category limit is ${maxCustomCategories}.`);
+    return false;
+  }
+
+  const normalizedCategory = normalizeCustomCategoryName(categoryName);
+  const normalizedApp = normalizeCustomName(appName);
+  if (!normalizedCategory || !normalizedApp) {
+    return false;
+  }
+
+  const { category, option } = createUserCategory(normalizedCategory, normalizedApp);
+  state.customCategories.push(category);
+  state.custom[category.id] = option;
+  state.selected[category.id] = selected ? customOptionId : null;
+  return true;
+}
+
+function removeUserCategory(categoryId) {
+  state.customCategories = state.customCategories.filter((category) => category.id !== categoryId);
+  delete state.custom[categoryId];
+  delete state.selected[categoryId];
+  update();
+  setStatus("Custom category removed.");
+}
+
+function hydrateCustomCategories(params) {
+  const raw = params.get(customCategoriesParam);
+  if (!raw) {
+    return;
+  }
+
+  try {
+    const customCategories = JSON.parse(raw);
+    if (!Array.isArray(customCategories)) {
+      return;
+    }
+
+    customCategories.slice(0, maxCustomCategories).forEach((item) => {
+      if (!item || typeof item !== "object") {
+        return;
+      }
+      addUserCategory(item.category, item.app, { selected: item.selected !== false });
+    });
+  } catch (error) {
+    params.delete(customCategoriesParam);
+  }
 }
 
 function hydrateFromQueryParams() {
   const params = new URLSearchParams(window.location.search);
+  hydrateCustomCategories(params);
 
-  categories.forEach((category) => {
+  getAllCategories().forEach((category) => {
     const value = params.get(category.id);
     if (!value) {
       return;
@@ -865,7 +1004,11 @@ function hydrateFromQueryParams() {
 function updateQueryParams() {
   const params = new URLSearchParams();
 
-  categories.forEach((category) => {
+  getAllCategories().forEach((category) => {
+    if (category.isUserCategory) {
+      return;
+    }
+
     const selectedId = state.selected[category.id];
     if (!selectedId) {
       return;
@@ -881,6 +1024,14 @@ function updateQueryParams() {
 
     params.set(category.id, selectedId);
   });
+
+  if (state.customCategories.length) {
+    params.set(customCategoriesParam, JSON.stringify(state.customCategories.map((category) => ({
+      category: category.name,
+      app: state.custom[category.id]?.name || "",
+      selected: state.selected[category.id] === customOptionId
+    }))));
+  }
 
   const query = params.toString();
   const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
@@ -911,6 +1062,7 @@ function update({ syncUrl = true, renderCategoryList = true } = {}) {
 function resetStack() {
   state.selected = createEmptySelection();
   state.custom = createEmptyCustomSelection();
+  state.customCategories = [];
   update();
   setStatus("Stack reset.");
 }
@@ -989,6 +1141,12 @@ function setStatus(message) {
 }
 
 elements.categoryList.addEventListener("click", (event) => {
+  const removeButton = event.target.closest(".remove-category");
+  if (removeButton) {
+    removeUserCategory(removeButton.dataset.removeCategory);
+    return;
+  }
+
   const button = event.target.closest(".option-card");
   if (!button) {
     return;
@@ -1024,6 +1182,28 @@ elements.categoryList.addEventListener("submit", (event) => {
   };
   state.selected[categoryId] = customOptionId;
   update();
+});
+
+elements.customCategoryForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const categoryInput = elements.customCategoryForm.elements.categoryName;
+  const appInput = elements.customCategoryForm.elements.appName;
+
+  if (!normalizeCustomCategoryName(categoryInput.value)) {
+    categoryInput.focus();
+    return;
+  }
+
+  if (!normalizeCustomName(appInput.value)) {
+    appInput.focus();
+    return;
+  }
+
+  if (addUserCategory(categoryInput.value, appInput.value)) {
+    elements.customCategoryForm.reset();
+    update();
+    setStatus("Custom category added.");
+  }
 });
 
 elements.share.addEventListener("click", shareStack);
